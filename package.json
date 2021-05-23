@@ -1,0 +1,17 @@
+{
+  "type": "module",
+  "name": "twitter-guest-client",
+  "version": "0.1.0",
+  "description": "A guest client for twitter",
+  "module": "publish/twitter.js",
+  "types": "twitter.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "bree",
+  "license": "GNU AGPLv3",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
