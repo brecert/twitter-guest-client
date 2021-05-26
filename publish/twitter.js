@@ -35,7 +35,7 @@ export class TwitterClient {
         }
         return this.guestToken;
     }
-    async getVideos(id) {
+    async getTweet(id) {
         const apiUrl = `https://api.twitter.com/2/timeline/conversation/${id}.json?tweet_mode=extended`;
         return fetch(apiUrl, {
             headers: {
@@ -54,11 +54,14 @@ export class TwitterClient {
             const tweets = conversation.globalObjects.tweets;
             return tweets[tweets[id].retweeted_status_id_str ??
                 tweets[id].quoted_status_id_str ?? id];
-        })
+        });
+    }
+    async getVideos(id) {
+        return this.getTweet(id)
             .then((tweet) => tweet.extended_entities?.media
-            ?.filter((m) => m.type === "video")
+            .filter((m) => m.type === "video" || m.type === "animated_gif")
             .flatMap((entity) => entity.video_info.variants
-            .filter((v) => v.bitrate)
+            .filter((v) => v.bitrate != null)
             .sort((a, b) => a.bitrate - b.bitrate)?.[0]))
             .then((info) => info ? info.length > 0 ? info : null : null);
     }

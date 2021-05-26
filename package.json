@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "twitter-guest-client",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A guest client for twitter",
   "module": "publish/twitter.js",
   "types": "twitter.ts",
