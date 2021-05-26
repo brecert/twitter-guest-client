@@ -28,15 +28,19 @@ export interface VideoInfo {
   content_type: string;
 }
 
+type ExtendedMediaEntity =
+  | { type: "video" | "animated_gif"; video_info: { variants: VideoInfo[] } }
+  | { type: "photo" };
+
+type ExtendedVideoEntity = Extract<
+  ExtendedMediaEntity,
+  { type: "video" | "animated_gif" }
+>;
+
 // just scaffolded for what's needed
 export interface Tweet {
   extended_entities?: {
-    media?: {
-      type: "video" | string;
-      video_info: {
-        variants: VideoInfo[];
-      };
-    }[];
+    media: ExtendedMediaEntity[];
   };
 
   retweeted_status_id_str?: string;
@@ -74,7 +78,7 @@ export class TwitterClient {
     return this.guestToken!;
   }
 
-  async getVideos(id: string) {
+  async getTweet(id: string) {
     const apiUrl =
       `https://api.twitter.com/2/timeline/conversation/${id}.json?tweet_mode=extended`;
 
@@ -99,13 +103,19 @@ export class TwitterClient {
           tweets[id].retweeted_status_id_str ??
             tweets[id].quoted_status_id_str ?? id
         ];
-      })
+      });
+  }
+
+  async getVideos(id: string) {
+    return this.getTweet(id)
       .then((tweet) =>
         tweet.extended_entities?.media
-          ?.filter((m) => m.type === "video")
+          .filter((m): m is ExtendedVideoEntity =>
+            m.type === "video" || m.type === "animated_gif"
+          )
           .flatMap((entity) =>
             entity.video_info.variants
-              .filter((v) => v.bitrate)
+              .filter((v) => v.bitrate != null)
               .sort((a, b) => a.bitrate! - b.bitrate!)
               ?.[0] as Required<VideoInfo>
           )
