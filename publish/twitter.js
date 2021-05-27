@@ -62,7 +62,7 @@ export class TwitterClient {
             .filter((m) => m.type === "video" || m.type === "animated_gif")
             .flatMap((entity) => entity.video_info.variants
             .filter((v) => v.bitrate != null)
-            .sort((a, b) => a.bitrate - b.bitrate)?.[0]))
+            .sort((a, b) => b.bitrate - a.bitrate)?.[0]))
             .then((info) => info ? info.length > 0 ? info : null : null);
     }
 }

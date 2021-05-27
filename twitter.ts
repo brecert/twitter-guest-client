@@ -116,7 +116,7 @@ export class TwitterClient {
           .flatMap((entity) =>
             entity.video_info.variants
               .filter((v) => v.bitrate != null)
-              .sort((a, b) => a.bitrate! - b.bitrate!)
+              .sort((a, b) => b.bitrate! - a.bitrate!)
               ?.[0] as Required<VideoInfo>
           )
       )
