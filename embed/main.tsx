@@ -1,3 +1,6 @@
+import h from "https://cdn.skypack.dev/vhtml?dts";
+const React = { createElement: h };
+
 import {
   listenAndServe,
   Response,
@@ -99,11 +102,11 @@ function main() {
           } as const;
 
           const ogpMeta = Object.entries(meta).map(([k, v]) =>
-            `<meta property="og:${k}" content="${v}"/>`
-          ).join("");
+            <meta property={`og:${k}`} content={`${v}`} />
+          );
           const twtMeta = Object.entries(twitterMeta).map(([k, v]) =>
-            `<meta property="${k}" content="${v}"/>`
-          ).join("");
+            <meta property={k} content={`${v}`} />
+          );
 
           const base = `${proto}://${req.headers.get("host")}`;
 
@@ -111,15 +114,15 @@ function main() {
             headers: new Headers({
               "Content-Type": "text/html",
             }),
-            body: `
-            <html>
-              <title></title>
-              <meta name="theme-color" content="#1da0f2" />
-              <meta charset="utf-8"/>
-              ${twtMeta}
-              ${ogpMeta}
-              <link rel="alternate" href="${base}/oembed.json?username=${username}" type="application/json+oembed" title="${username}">
-            </html>`,
+            body:
+              <html>
+                <title></title>
+                <meta name="theme-color" content="#1da0f2" />
+                <meta charset="utf-8" />
+                {twtMeta}
+                {ogpMeta}
+                <link rel="alternate" href={`${base}/oembed.json?username=${username}`} type="application/json+oembed" title={username} />
+              </html>,
           };
         }
       }
