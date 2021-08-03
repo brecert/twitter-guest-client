@@ -4,43 +4,48 @@ import {
   assertExists,
 } from "https://deno.land/std@0.97.0/testing/asserts.ts";
 
-import { TwitterClient, TwitterError, TwitterErrorList } from "./twitter.ts";
+import * as Twitter from "./twitter.ts";
 
-const twitter = new TwitterClient("twitter-guest-client (test)");
+const twitter = new Twitter.GuestClient("twitter-guest-client (test)");
 
-Deno.test("getVideos#basic", async () => {
-  let videos;
+Deno.test("getTweet#videos", async () => {
+  let tweet, videos;
 
   // Actual Video
-  videos = await twitter.getVideos(
+  tweet = await twitter.getTweet(
     "1395363681790136323",
   );
-  assertExists(videos);
+  assertExists(tweet);
 
   // Animated Gif
-  videos = await twitter.getVideos(
+  tweet = await twitter.getTweet(
     "1395769820692377601",
   );
-  console.log(videos)
+
+  videos = Twitter.getVideos(tweet);
+  assertExists(videos)
+
+  const videoInfo = Twitter.getVideoInfo(videos![0])
+
   assertEquals(
-    videos?.[0].url,
+    videoInfo.url,
     "https://video.twimg.com/tweet_video/E17FCpeVkAYJO2I.mp4",
   );
 
   // No videos
-  videos = await twitter.getVideos(
+  tweet = await twitter.getTweet(
     "1395032697597087746",
   );
-  assertEquals(videos, null);
+
+  videos = await Twitter.getVideos(tweet);
+  assertEquals(videos, []);
 
   // Invalid
   try {
-    videos = await twitter.getVideos(
-      "0",
-    );
+    tweet = await twitter.getTweet("0");
     assert(false, "Expected error.");
   } catch (err) {
-    assertEquals(err instanceof TwitterErrorList, true);
-    assertEquals(err.errors[0] instanceof TwitterError, true);
+    assertEquals(err instanceof Twitter.TwitterErrorList, true);
+    assertEquals(err.errors[0] instanceof Twitter.TwitterError, true);
   }
 });

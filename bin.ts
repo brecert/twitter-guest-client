@@ -2,7 +2,7 @@ import {
   assert,
   assertExists,
 } from "https://deno.land/std@0.97.0/testing/asserts.ts";
-import { TwitterClient } from "./twitter.ts";
+import * as Twitter from "./twitter.ts";
 
 import { readerFromStreamReader } from "https://deno.land/std@0.97.0/io/mod.ts";
 
@@ -33,9 +33,10 @@ if (onlyDigits(inputSource)) {
 
 outputPath ??= `${id}.mp4`;
 
-const twitter = new TwitterClient("Twitter Guest Client -- Cli Fetcher");
+const twitter = new Twitter.GuestClient("Twitter Guest Client -- Cli Fetcher");
 
-const videos = await twitter.getVideos(id);
+const tweet = await twitter.getTweet(id);
+const videos = Twitter.getVideos(tweet)
 
 assertExists(videos, "This tweet has no valid videos to download");
 
